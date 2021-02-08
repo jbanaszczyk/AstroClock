@@ -12,6 +12,7 @@
       <file path="$PROJECT_DIR$/cmake-build-debug" />
       <file path="$PROJECT_DIR$/cmake-build-native" />
       <file path="$PROJECT_DIR$/cmake-build-native-mingw-32" />
+      <file path="$PROJECT_DIR$/lib/mem_info" />
     </excludeRoots>
   </component>
 </project>

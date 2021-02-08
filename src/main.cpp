@@ -1,16 +1,25 @@
 
+#include <Arduino.h>
+#include <iostream>
+#include <exception>
 
-#ifdef UNIT_TEST
-#include "ArduinoFake.h"
-#else
-#include "Arduino.h"
-#endif
+#include <check_exceptions.h>
 
-void setup() { pinMode(LED_BUILTIN, OUTPUT); }
-
-void loop() {
-  digitalWrite(LED_BUILTIN, HIGH);
-  delay(100);
-  digitalWrite(LED_BUILTIN, LOW);
-  delay(100);
+void func(void) {
+	throw std::runtime_error("exception thrown.");
 }
+
+void setup() {
+	Serial.begin(115200);
+	delay(2000);
+	while (!Serial) {
+	}
+	Serial.println();
+	Serial.println();
+
+	Serial.println("_______go");
+
+	check_try_catch();
+}
+
+void loop() {}
