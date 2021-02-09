@@ -1,5 +1,11 @@
 #include "Configuration.h"
 
+#ifdef DEBUG_CONFIGURATION_PORT
+#define DEBUG_CONFIGURATION(...) DEBUG_CONFIGURATION_PORT.printf( __VA_ARGS__ )
+#else
+#define DEBUG_CONFIGURATION(...)
+#endif
+
 EEPROM_Rotate &get_EEPROM_Rotate() {
 	static EEPROM_Rotate eepromRotate;
 	return eepromRotate;
@@ -30,48 +36,44 @@ Configuration::Configuration(EEPROM_Rotate &eeprom) : eeprom(eeprom) {
 	reservedAreaSize = getReservedAreaSize(eeprom);
 	eeprom.begin(reservedAreaSize + sizeof(data));
 
-#ifdef DEBUG_CONFIGURATION
+#ifdef DEBUG_CONFIGURATION_PORT
 	long eepromSize = Configuration::eeprom.reserved() * SPI_FLASH_SEC_SIZE;
-	Serial.printf("[EEPROM] EEPROM size        : %ld bytes / %ld sectors\n", eepromSize, (eepromSize + SPI_FLASH_SEC_SIZE - 1) / SPI_FLASH_SEC_SIZE);
-	Serial.printf("[EEPROM] Reserved sectors   : %u\n", eeprom.reserved());
-	Serial.printf("[EEPROM] Sector pool size   : %u\n", eeprom.size());
-	Serial.printf("[EEPROM] Sectors in use     : ");
+	DEBUG_CONFIGURATION("[EEPROM] EEPROM size        : %ld bytes / %ld sectors\n", eepromSize, (eepromSize + SPI_FLASH_SEC_SIZE - 1) / SPI_FLASH_SEC_SIZE);
+	DEBUG_CONFIGURATION("[EEPROM] Reserved sectors   : %u\n", eeprom.reserved());
+	DEBUG_CONFIGURATION("[EEPROM] Sector pool size   : %u\n", eeprom.size());
+	DEBUG_CONFIGURATION("[EEPROM] Sectors in use     : ");
 	for (uint_fast8_t i = 0; i < eeprom.size(); ++i) {
 		if (i > 0) {
-			Serial.print(", ");
+			DEBUG_CONFIGURATION(", ");
 		}
-		Serial.print(eeprom.base() - i);
+		DEBUG_CONFIGURATION("%d", eeprom.base() - i);
 	}
 	Serial.println();
-	Serial.printf("[EEPROM] Current sector     : %u\n", eeprom.current());
-	Serial.printf("[CONFIG] Store size         : %zu bytes\n", eeprom.length());
-	Serial.printf("[CONFIG] Reserved area size : %u bytes\n", reservedAreaSize);
+	DEBUG_CONFIGURATION("[EEPROM] Current sector     : %u\n", eeprom.current());
+	DEBUG_CONFIGURATION("[CONFIG] Store size         : %zu bytes\n", eeprom.length());
+	DEBUG_CONFIGURATION("[CONFIG] Reserved area size : %u bytes\n", reservedAreaSize);
 #endif
 
 	size_t sizeofReadyData = eeprom.get(reservedAreaSize, sizeofReadyData);
 
-	Serial.printf("[CONFIG] Data size          : %u bytes\n", sizeof(data));
-	Serial.printf("[CONFIG] EEPROM data size   : %u bytes\n", sizeofReadyData);
+	DEBUG_CONFIGURATION("[CONFIG] Data size          : %u bytes\n", sizeof(data));
+	DEBUG_CONFIGURATION("[CONFIG] EEPROM data size   : %u bytes\n", sizeofReadyData);
 
 	if (sizeofReadyData == sizeof(data)) {
-		Serial.printf("[CONFIG] Read from sector %d\n", eeprom.current());
+		DEBUG_CONFIGURATION("[CONFIG] Read from sector %d\n", eeprom.current());
 		memcpy(&data, eeprom.getConstDataPtr() + reservedAreaSize, sizeof(data));
 	} else if (sizeofReadyData > sizeof(data)) {
-		Serial.printf("[CONFIG] reinitializing\n");
-		memcpy(&data, getConfigurationDefault(), sizeof(data));
+		DEBUG_CONFIGURATION("[CONFIG] Reinitializing\n");
+		data=getConfigurationDefault();
 	} else if (sizeofReadyData < sizeof(data)) {
-		Serial.printf("[CONFIG] Partially (%zu bytes of %zu) read from sector %d\n", sizeofReadyData, sizeof(data), eeprom.current());
-		memcpy(&data, getConfigurationDefault(), sizeof(data));
+		DEBUG_CONFIGURATION("[CONFIG] Partially (%zu bytes of %zu) read from sector %d\n", sizeofReadyData, sizeof(data), eeprom.current());
+		data=getConfigurationDefault();
 		memcpy(&data, eeprom.getConstDataPtr() + reservedAreaSize, sizeofReadyData);
-//		commit(eeprom);
 	}
-
-	Serial.println("___________");
-//	Serial.println(data.getSomeValue());
-//	Serial.println(data.getAnotherValue());
 }
 
 bool Configuration::commit(EEPROM_Rotate &eeprom) {
+	DEBUG_CONFIGURATION("[CONFIG] Commit to EEPROM\n");
 	data.fix_size();
 	eeprom.put(reservedAreaSize, data);
 	return eeprom.commit();

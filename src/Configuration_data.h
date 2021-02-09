@@ -37,4 +37,4 @@ public:
 			anotherValue(anotherValue) {}
 };
 
-Configuration_data *getConfigurationDefault();
+Configuration_data &getConfigurationDefault();
