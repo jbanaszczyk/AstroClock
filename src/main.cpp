@@ -1,25 +1,23 @@
 
 #include <Arduino.h>
-#include <iostream>
-#include <exception>
-
 #include <check_exceptions.h>
-
-void func(void) {
-	throw std::runtime_error("exception thrown.");
-}
+#include "globals.h"
 
 void setup() {
 	Serial.begin(115200);
-	delay(2000);
 	while (!Serial) {
 	}
 	Serial.println();
-	Serial.println();
 
-	Serial.println("_______go");
+	delay(5000);
 
-	check_try_catch();
+	Serial.println("[INIT] Setup");
+
+	check_try_catch(false);
+	configuration = getConfiguration(get_EEPROM_Rotate());
+
+	Serial.println("[INIT] Good luck!");
 }
 
-void loop() {}
+void loop() {
+}

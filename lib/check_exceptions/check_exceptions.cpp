@@ -4,6 +4,7 @@
 #include "check_exceptions.h"
 
 void check_try_catch(boolean verbose) {
+#ifdef CHECK_EXCEPTIONS
 	try {
 		throw std::runtime_error("exception thrown.");
 	} catch (const std::exception &e) {
@@ -12,4 +13,5 @@ void check_try_catch(boolean verbose) {
 			Serial.println(e.what());
 		}
 	}
+#endif
 }
