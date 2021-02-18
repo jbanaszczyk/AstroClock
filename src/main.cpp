@@ -27,6 +27,8 @@ void setup() {
 }
 
 void loop() {
+
+	static auto initFreeHeap = ESP.getFreeHeap();
 	//software interrupts
 	WiFiManager.loop();
 
@@ -34,20 +36,27 @@ void loop() {
 	if (taskA.previous == 0 || (millis() - taskA.previous > taskA.rate)) {
 		taskA.previous = millis();
 
-		Serial.println("Before fetch");
-//		auto result = fetch.GET("https://api.ipgeolocation.io/timezone?apiKey=a8d4b9360d214b32bf057aaf1a6907ec");
-		auto result = fetch.GET("https://www.google.com");
+		Serial.printf("Free heap memory: %d %d\n", ESP.getFreeHeap(), initFreeHeap);
+
+		Serial.println("Before httpRequest");
+		HTTPRequest httpRequest("https://www.google.com");
+//		HTTPRequest httpRequest("http://www.google.com");
+//		HTTPRequest httpRequest("https://api.ipgeolocation.io/timezone?apiKey=a8d4b9360d214b32bf057aaf1a6907ec");
+
+		auto result = httpRequest.GET();
 		Serial.printf("HTTP status: %d\n", result);
 
-		while (fetch.busy()) {
-			if (fetch.available()) {
-				Serial.write(fetch.read());
+		while (httpRequest.busy()) {
+			if (httpRequest.available()) {
+				Serial.write(httpRequest.read());
 			} else {
 				delay(1);
 			}
 		}
 
-		fetch.clean();
+		Serial.println("++++++++++++");
+		httpRequest.end();
+		Serial.println("++++++++++++");
 	}
 }
 
