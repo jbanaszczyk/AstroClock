@@ -8,35 +8,15 @@
 #include "configManager.h"
 #include "timeSync.h"
 
-struct task
-{
+
+struct task {
 	unsigned long rate;
 	unsigned long previous;
 };
 
-task taskA = {.rate = 60000, .previous = 0};
-
-
-//#include <check_exceptions.h>
-//#include "globals.h"
-
-
-//#include "NetConnector.h"
+task taskA = {.rate = 10000, .previous = 0};
 
 void setup() {
-//	Serial.begin(115200);
-//	while (!Serial) {
-//	}
-//	Serial.println();
-//
-//	Serial.println("[INIT] Setup");
-//
-////	configuration = getConfiguration(get_EEPROM_Rotate());
-////	netConnector = getNetConnector();
-//
-//
-//	Serial.println("[INIT] Good luck!");
-
 	Serial.begin(115200);
 
 	LittleFS.begin();
@@ -46,41 +26,30 @@ void setup() {
 	timeSync.begin();
 }
 
-void loop()
-{
+void loop() {
 	//software interrupts
 	WiFiManager.loop();
-	updater.loop();
-
 
 	//task A
-	if (taskA.previous == 0 || (millis() - taskA.previous > taskA.rate))
-	{
+	if (taskA.previous == 0 || (millis() - taskA.previous > taskA.rate)) {
 		taskA.previous = millis();
 
-		//option 1:
-		//write directly to the configData ram mirror
-		configManager.data.dummyInt++;
+		Serial.println("Before fetch");
+//		auto result = fetch.GET("https://api.ipgeolocation.io/timezone?apiKey=a8d4b9360d214b32bf057aaf1a6907ec");
+		auto result = fetch.GET("https://www.google.com");
+		Serial.printf("HTTP status: %d\n", result);
 
-		//save the newest values in the EEPROM
-		configManager.save();
+		while (fetch.busy()) {
+			if (fetch.available()) {
+				Serial.write(fetch.read());
+			} else {
+				delay(1);
+			}
+		}
 
-
-		//option 2:
-		//create a new config data object
-		//in this case make sure you set all values
-		configData newData =
-				{
-						"Generic ESP8266 Firmware",
-						configManager.data.dummyInt + 1,
-						true,
-						1.2345,
-						"invisible!"
-				};
-
-		///The saveExternal function copies the object to EEPROM
-//		configManager.saveExternal(&newData);
-
+		fetch.clean();
 	}
-
 }
+
+
+

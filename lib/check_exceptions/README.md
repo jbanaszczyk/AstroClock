@@ -1,16 +1,18 @@
-#if exceptions are not supported yet
+# Exceptions
 
-Exceptions should be supported in current version of Arduino, but...
+Latest Arduino supports `build_flags = -D PIO_FRAMEWORK_ARDUINO_ENABLE_EXCEPTIONS`
 
-https://github.com/platformio/platform-espressif8266/issues/237
+platformio/espressif8266 version is 2.6.3. Build flag `PIO_FRAMEWORK_ARDUINO_ENABLE_EXCEPTIONS` is not supported.
 
-Flag `build_flags = -D PIO_FRAMEWORK_ARDUINO_ENABLE_EXCEPTIONS` does not work
+## Steps to enable exceptions:
 
-Steps to enable exceptions:
+### CPP_FLAGS
 ```
 build_flags = -fexceptions
 build_unflags = -fno-exceptions
 ```
+
+### library `stdc++-exc`
 
 Edit file `C:\Users\***\.platformio\packages\framework-arduinoespressif8266\tools\platformio-build.py`
 
@@ -25,11 +27,6 @@ LIBS=[
 
 Replace `stdc++` with `stdc++-exc`
 
-#if exceptions are supported
+## Memory usage
 
-* Remove calls: `check_try_catch()`
-* Remove whole `lib`
-* Fix `platformio.ini`:
-  remove `build_flags = -fexceptions`
-  remove `build_unflags = -fno-exceptions`
-  add `build_flags = -D PIO_FRAMEWORK_ARDUINO_ENABLE_EXCEPTIONS`
+It increases bin size for 162.904 (16% of flash size)

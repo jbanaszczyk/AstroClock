@@ -1,3 +1,3 @@
 #pragma once
 
-void check_try_catch(boolean verbose = true);
+bool check_try_catch(bool verbose);
