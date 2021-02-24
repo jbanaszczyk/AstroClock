@@ -85,7 +85,6 @@ void setup() {
 
 }
 
-
 void getExample() {
 	Serial.println("Before httpRequest");
 	HTTPRequest httpRequest("https://www.google.com");
@@ -108,19 +107,32 @@ void getExample() {
 }
 
 void dumpWiFIStatus() {
-	Serial.printf("Name:    %s\n", WiFi.hostname().c_str());
 	Serial.printf("Status:  %d\n", WiFi.status());
 	Serial.printf("Mode:    %d\n", WiFi.getMode());
-	Serial.printf("SSID:    %s\n", WiFi.SSID().c_str());
-	Serial.printf("IP:      %s\n", WiFi.localIP().toString().c_str());
-	Serial.printf("Subnet:  %s\n", WiFi.subnetMask().toString().c_str());
-	Serial.printf("Gateway: %s\n", WiFi.gatewayIP().toString().c_str());
-	Serial.printf("DNS:     %s\n", WiFi.dnsIP().toString().c_str());
-	Serial.printf("DHCP:    %d\n", wifi_station_dhcpc_status());
-	WiFi.getPersistent() ? Serial.printf("Persistent\n") : Serial.printf("Volatile\n");
-	WiFi.getAutoReconnect() ? Serial.printf("Auto reconnect\n") : Serial.printf("Dont reconnect\n");
+	Serial.printf("Name:    %s\n", WiFi.hostname().c_str());
+
+	if (WiFi.getMode() & WIFI_STA) {
+		Serial.println("==[ STAtion ]==========");
+		Serial.printf("SSID:    %s\n", WiFi.SSID().c_str());
+		Serial.printf("IP:      %s\n", WiFi.localIP().toString().c_str());
+		Serial.printf("Subnet:  %s\n", WiFi.subnetMask().toString().c_str());
+		Serial.printf("Gateway: %s\n", WiFi.gatewayIP().toString().c_str());
+		Serial.printf("DNS:     %s\n", WiFi.dnsIP().toString().c_str());
+		Serial.printf("DHCP:    %d\n", wifi_station_dhcpc_status());
+		WiFi.getPersistent() ? Serial.printf("Persistent\n") : Serial.printf("Volatile\n");
+		WiFi.getAutoReconnect() ? Serial.printf("Auto reconnect\n") : Serial.printf("Dont reconnect\n");
+	}
+
+	if (WiFi.getMode() & WIFI_AP) {
+		Serial.println("==[ AP ]===============");
+		Serial.printf("SSID:    %s\n", WiFi.softAPSSID().c_str());
+		Serial.printf("IP:      %s\n", WiFi.softAPIP().toString().c_str());
+	}
+
 	Serial.println("____________________");
 	Serial.printf("PSK:     %s\n", WiFi.psk().c_str());
+	Serial.printf("AP PSK:  %s\n", WiFi.softAPPSK().c_str());
+	Serial.println();
 }
 
 void disconnect() {
@@ -137,10 +149,12 @@ void reconnect() {
 			IPAddress()
 	);
 
-
 	WiFi.begin("GolemXIV", "DuPa.9736");
-	while (WiFi.status() != WL_CONNECTED) {
-		delay(500);
+	for (int i = 0; i < 15; ++i) {
+		if (WiFi.isConnected()) {
+			break;
+		}
+		delay(1000);
 		Serial.print(".");
 	}
 	Serial.printf("\nStatus %d ", WiFi.status());
@@ -148,17 +162,20 @@ void reconnect() {
 }
 
 void alt_reconnect() {
-	Serial.printf("Connect\n");
+	Serial.printf("Alt connect\n");
 
 	WiFi.config(
-			IPAddress(192, 168, 1, 200),
-			IPAddress(192, 168, 1, 1),
-			IPAddress(255, 255, 0, 0),
-			IPAddress(192, 168, 1, 1)
+			IPAddress(),
+			IPAddress(),
+			IPAddress()
 	);
-	WiFi.begin("GolemXIV", "DuPa.9736");
-	while (WiFi.status() != WL_CONNECTED) {
-		delay(500);
+
+	WiFi.begin();
+	for (int i = 0; i < 15; ++i) {
+		if (WiFi.isConnected()) {
+			break;
+		}
+		delay(1000);
 		Serial.print(".");
 	}
 	Serial.printf("\nStatus %d ", WiFi.status());
