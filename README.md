@@ -17,15 +17,10 @@ pio lib install "maakbaas/ESP8266 IoT Framework"
 cd .pio\libdeps\nodemcu\ESP8266 IoT Framework
 npm install
 npm audit fix
+npx browserslist@latest --update-db
 ```
 
 Do not use `npm audit fix --force`
-
-## Optional step:
-
-```commandline
-npx browserslist@latest --update-db
-```
 
 ## Available build flags
 
