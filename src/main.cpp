@@ -1,54 +1,77 @@
 #include <Arduino.h>
-#include <LittleFS.h>
+#include <SerialCommands.h>
 
-#include <WiFiManager.h>
-#include <webServer.h>
-#include <OtaUpdateHelper.h>
-#include <configManager.h>
-#include <timeSync.h>
-#include <TZ.h>
-
-void showNow() {
-	if (timeSync.isSynced()) {
-		time_t now;
-		struct tm *info;
-		time(&now);
-		info = localtime(&now);
-		char buffer[80];
-
-		strftime(buffer, sizeof(buffer), "%Y.%m.%d %H.%M.%S", info);
-		Serial.printf_P("Current local time: %s\n", buffer);
-	} else {
-		Serial.printf_P("Time is not ready\n");
-	}
+void doHello(SerialCommands *sender) {
+	sender->getStream()->println("Ello, ello.");
 }
+
+void doMore(SerialCommands *sender) {
+	sender->getStream()->println("more");
+}
+
+void doLess(SerialCommands *sender) {
+	sender->getStream()->println("less");
+}
+
+void doNothing(SerialCommands *sender) {
+	sender->getStream()->println("nothing");
+}
+
+void doHelp(SerialCommands *sender) {
+	sender->printHelp();
+}
+
+void doSthWithArgs(SerialCommands *sender) {
+	Stream *stream = sender->getStream();
+	stream->printf("Got command\n");
+	decltype(sender->Next()) argument;
+	while ((argument = sender->Next()) != nullptr) {
+		stream->printf("\targument: %s\n", argument);
+	}
+	stream->printf("=================\n");
+}
+
+void iDontKnowWhatShouldIDo(SerialCommands *sender, const char *cmd) {
+	Stream *stream = sender->getStream();
+	stream->printf("Got unrecognized command [%s]", cmd);
+	auto counter = 0U;
+	decltype(sender->Next()) argument;
+	while ((argument = sender->Next()) != nullptr) {
+		if (counter == 0) {
+			stream->printf("\tArguments:");
+		}
+		stream->printf(" #%d:{%s}", counter, argument);
+		++counter;
+	}
+	stream->printf("\n");
+}
+
+static SerialCommands *serialProcessor = nullptr;
 
 void setup() {
 	Serial.begin(115200);
 	while (!Serial) {}
 	Serial.println();
 
-	LittleFS.begin();
-	GUI.begin();
-	configManager.begin();
-	WiFiManager.begin(configManager.data.projectName);
+	static SerialCommand staticHelp("?", "Show help", doHelp, true, false);
 
-	//Set the timezone
-	timeSync.begin(TZ_Europe_Warsaw);
+	serialProcessor = new SerialCommands();
 
-	//Wait for connection
-	timeSync.waitForSyncResult(10000);
+	serialProcessor->setDefaultHandler(iDontKnowWhatShouldIDo);
 
-	showNow();
-	Serial.printf_P("==[ Setup done ]============\n");
+	serialProcessor->AddCommand(new SerialCommand("x", "Example command with arguments", doSthWithArgs, false, true));
+	serialProcessor->AddCommand(new SerialCommand("Hello", nullptr, doHello, false, true));
+	serialProcessor->AddCommand("help", "Show help", doHelp);
+	serialProcessor->AddCommand(new SerialCommand("+", "Do more", doMore, true, true));
+	serialProcessor->AddCommand(new SerialCommand("-", "Do less", doLess, true, true));
+	serialProcessor->AddCommand(new SerialCommand("0", nullptr, doNothing, true, true));
+	serialProcessor->AddCommand(&staticHelp);
+
+	Serial.printf("Press ? to get help\n");
 }
 
 void loop() {
-	//software interrupts
-	WiFiManager.loop();
-	otaUpdateHelper.loop();
-	configManager.loop();
-
-	delay(1000);
-	showNow();
+	if (serialProcessor != nullptr) {
+		serialProcessor->ReadSerial();
+	}
 }
