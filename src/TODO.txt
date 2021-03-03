@@ -1,0 +1,5 @@
+// TODO
+
+Popatrzeć nae eventy: .platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src\ESP8266WiFiGeneric.cpp
+
+C:\Users\JB\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src\ESP8266WiFiGeneric.cpp

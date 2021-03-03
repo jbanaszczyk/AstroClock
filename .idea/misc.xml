@@ -15,7 +15,7 @@
       <file path="$PROJECT_DIR$/lib/calculator" />
       <file path="$PROJECT_DIR$/lib/check_exceptions" />
       <file path="$PROJECT_DIR$/lib/mem_info" />
-      <file path="$PROJECT_DIR$/lib/more" />
+      <file path="$PROJECT_DIR$/lib/unused" />
     </excludeRoots>
   </component>
   <component name="PythonCompatibilityInspectionAdvertiser">
