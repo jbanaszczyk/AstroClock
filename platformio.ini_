@@ -14,16 +14,17 @@ board = nodemcu
 framework = arduino
 board_build.ldscript = ld/eagle.flash.4m.custom.ld
 board_build.filesystem = littlefs
-monitor_speed = 115200
+monitor_speed = 74880
 upload_speed = 921600
 test_filter = test_common test_embedded
-lib_deps = 
-	xoseperez/EEPROM_Rotate@^0.9.2
-	mbed-floatlei/eeprom@0.0.0+sha.b71fbcf5b8e4
-	https://github.com/me-no-dev/ESPAsyncTCP.git
-	https://github.com/me-no-dev/ESPAsyncWebServer.git
-	https://github.com/jbanaszczyk/esp8266-iot-framework.git
-    https://github.com/ppedro74/Arduino-SerialCommands.git
+lib_deps =
+    xoseperez/EEPROM_Rotate@^0.9.2
+    mbed-floatlei/eeprom@0.0.0+sha.b71fbcf5b8e4
+    https://github.com/me-no-dev/ESPAsyncTCP.git
+    https://github.com/me-no-dev/ESPAsyncWebServer.git
+    https://github.com/jbanaszczyk/esp8266-iot-framework.git
+    https://github.com/jbanaszczyk/Arduino-SerialCommands.git
+    https://github.com/arkhipenko/TaskScheduler.git
 
 build_type = release
 
@@ -36,22 +37,27 @@ build_flags =
 
 ;    -D DEBUG_ESP_PORT=Serial
 ;    -D DEBUG_ESP_WIFI
-;    -D DEBUG_ESP_WIFI
+
+    -D DEVELOPMENT
+
+    -D USE_TASK_SCHEDULER
 
     -D DEBUG_IOT_PORT=Serial
-    -D DEBUG_IOT_WIFI_MANAGER
+;    -D DEBUG_IOT_WIFI_MANAGER
+;    -D DEBUG_IOT_CERT_STORE
+;    -D DEBUG_SERIAL_COMMANDS
 
-;    -DREBUILD_CONFIG
-;    -DCONFIG_PATH=src/configuration.json
+;    -D REBUILD_CONFIG
+;    -D CONFIG_PATH=src/configuration.json
+;
+    -D REBUILD_DASHBOARD
+    -D DASHBOARD_PATH=src/dashboard.json
 
-;    -DREBUILD_DASHBOARD
-;    -DDASHBOARD_PATH=src/dashboard.json
+    -D REBUILD_HTML
 
-    -DREBUILD_HTML
-
-;    -DREBUILD_CERTS
-    -Dopenssl="C:/Program Files/Git/usr/bin/openssl.exe"
-    -DDOMAIN_LIST=google.com,ipgeolocation.io
+;    -D REBUILD_CERTS
+;    -D openssl="C:/Program Files/Git/usr/bin/openssl.exe"
+;    -D DOMAIN_LIST=google.com,ipgeolocation.io
 
 ; Do not use, because WiFi dose not work
 ;    -D_DEBUG_HTTPCLIENT=Serial.printf

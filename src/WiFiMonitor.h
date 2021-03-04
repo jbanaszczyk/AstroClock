@@ -1,5 +1,3 @@
-#include <algorithm>
-
 #pragma once
 
 #include <Arduino.h>
@@ -9,6 +7,8 @@ class IWiFiMonitor {
 public:
 	virtual ~IWiFiMonitor() = default;
 };
+
+IWiFiMonitor *getWiFiMonitor();
 
 class WiFiMonitor : public IWiFiMonitor {
 public:
@@ -42,5 +42,3 @@ private:
 
 	static String macToString(const unsigned char *mac);
 };
-
-IWiFiMonitor *getWiFiMonitor();

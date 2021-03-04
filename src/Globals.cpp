@@ -1,5 +1,13 @@
 #include "Globals.h"
+#include <LittleFS.h>
+#include <webServer.h>
 
+void initGlobals() {
+	getRunner();
+//	getWiFiMonitor();
+	getCommandProcessor(new SerialCommands());
+	getConfigManager();
 
-ICommandProcessor *commandProcessor = nullptr;
-IWiFiMonitor *wiFiMonitor = nullptr;
+	LittleFS.begin();
+	GUI.begin();
+}

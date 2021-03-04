@@ -4,6 +4,7 @@
 
 #include "CommandProcessor.h"
 #include "WiFiMonitor.h"
+#include "Runner.h"
+#include <configManager.h>
 
-extern ICommandProcessor *commandProcessor;
-extern IWiFiMonitor *wiFiMonitor;
+void initGlobals();
