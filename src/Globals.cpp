@@ -3,10 +3,11 @@
 #include <webServer.h>
 
 void initGlobals() {
-	getRunner();
-//	getWiFiMonitor();
-	getCommandProcessor(new SerialCommands());
-	getConfigManager();
+	auto runner = getRunner();
+//	auto wiFiMonitor = getWiFiMonitor();
+	auto commandProcessor = getCommandProcessor(new SerialCommands());
+	auto configManager = getConfigManager();
+	configManager->addScheduler( runner->getScheduler());
 
 	LittleFS.begin();
 	GUI.begin();

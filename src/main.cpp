@@ -80,10 +80,10 @@ void setup() {
 	initGlobals();
 
 	wiFiManager.begin(getConfigManager()->getEepromData().getStoredData().getConfigData().projectName);
-//
+
 //	timeSync.begin(TZ_Europe_Warsaw);
 //	timeSync.waitForSyncResult(10000);
-//
+
 //	dash.begin(1000);
 }
 
@@ -91,16 +91,13 @@ void setup() {
 
 void loop() {
 	static IRunner *runner = getRunner();
-	static ConfigManager *configManager = getConfigManager();
 
 	wiFiManager.loop();
 //	otaUpdateHelper.loop();
-//	configManager.loop();
 //	dash.loop();
 //	updateDashboard();
 //	delay(1000);
 //	showNow();
 
 	runner->getScheduler()->execute();
-	configManager->loop();
 }

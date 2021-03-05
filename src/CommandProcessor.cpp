@@ -100,17 +100,17 @@ void CommandProcessor::doNothing(SerialCommands *sender) {
 
 void CommandProcessor::doConf(SerialCommands *sender) {
 	if (auto stream = sender->getStream()) {
-		auto config= getConfigManager()->getMutableEepromData()->getStoredData().getConfigData();
-		stream->printf("config projectName %s\n",config.projectName);
-		stream->printf("config %d\n",config.dummyInt);
+		auto config = getConfigManager()->getMutableEepromData()->getStoredData().getConfigData();
+		stream->printf("config projectName %s\n", config.projectName);
+		stream->printf("config %d\n", config.dummyInt);
 	}
 }
 
 void CommandProcessor::doSave(SerialCommands *sender) {
 	if (auto stream = sender->getStream()) {
-		auto config= getConfigManager()->getMutableEepromData()->getStoredData().getConfigData();
-		stream->printf("config projectName %s\n",config.projectName);
-		stream->printf("config %d\n",config.dummyInt);
+		auto config = getConfigManager()->getMutableEepromData()->getStoredData().getConfigData();
+		stream->printf("config projectName %s\n", config.projectName);
+		stream->printf("config %d\n", config.dummyInt);
 		getConfigManager()->setDirty();
 	}
 }
@@ -127,22 +127,29 @@ CommandProcessor::CommandProcessor(SerialCommands *serialCommands) :
 	serialCommands->AddCommand('?', "show system status", showStatus);
 	serialCommands->AddCommand("help", "Show help", doHelp);
 	serialCommands->getStream()->printf("Type help to get help\n");
-	startLoopTask();
+	createLoopTask();
 }
 
-void CommandProcessor::loop() {
-	if (serialCommands != nullptr) {
-		serialCommands->ReadSerial();
-	}
-}
-
-void CommandProcessor::startLoopTask() {
+void CommandProcessor::createLoopTask() {
 	loopTask = new Task(
 			33,
 			-1,
-			[this]() -> void { this->loop(); },
+			[this]() -> void {
+				if (serialCommands != nullptr) {
+					serialCommands->ReadSerial();
+				}
+			},
 			getRunner()->getScheduler(),
 			true);
+}
+
+void CommandProcessor::setStream(Stream *stream) {
+	serialCommands->setStream(stream);
+	if (stream != nullptr) {
+		loopTask->enable();
+	} else {
+		loopTask->disable();
+	}
 }
 
 ICommandProcessor *getCommandProcessor(SerialCommands *serialCommands) {
