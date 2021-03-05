@@ -85,6 +85,9 @@ void setup() {
 //	timeSync.waitForSyncResult(10000);
 
 //	dash.begin(1000);
+
+	Serial.printf("==[ global setup done ]=========\n");
+
 }
 
 // FIXME: move loop() to Runner.cpp

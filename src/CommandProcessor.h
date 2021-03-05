@@ -6,9 +6,8 @@
 class ICommandProcessor {
 public:
 	virtual ~ICommandProcessor() = default;
-
-	virtual void createLoopTask() = 0;
-
+	virtual void loop() = 0;
+	virtual void addScheduler(Scheduler *scheduler) =0;
 	virtual void setStream(Stream *stream) = 0;
 };
 
@@ -18,9 +17,10 @@ class CommandProcessor : public ICommandProcessor {
 public:
 	explicit CommandProcessor(SerialCommands *serialCommands);
 
-	void setStream(Stream *stream) override;
+	void addScheduler(Scheduler *scheduler) override;
+	void loop() override;
 
-	void createLoopTask() override;
+	void setStream(Stream *stream) override;
 
 private:
 	SerialCommands *serialCommands;
@@ -39,8 +39,4 @@ private:
 #endif
 
 	static void showStatus(SerialCommands *sender);
-
-	static void doConf(SerialCommands *sender);
-
-	static void doSave(SerialCommands *sender);
 };

@@ -98,49 +98,37 @@ void CommandProcessor::doNothing(SerialCommands *sender) {
 	}
 }
 
-void CommandProcessor::doConf(SerialCommands *sender) {
-	if (auto stream = sender->getStream()) {
-		auto config = getConfigManager()->getMutableEepromData()->getStoredData().getConfigData();
-		stream->printf("config projectName %s\n", config.projectName);
-		stream->printf("config %d\n", config.dummyInt);
-	}
-}
-
-void CommandProcessor::doSave(SerialCommands *sender) {
-	if (auto stream = sender->getStream()) {
-		auto config = getConfigManager()->getMutableEepromData()->getStoredData().getConfigData();
-		stream->printf("config projectName %s\n", config.projectName);
-		stream->printf("config %d\n", config.dummyInt);
-		getConfigManager()->setDirty();
-	}
-}
-
 CommandProcessor::CommandProcessor(SerialCommands *serialCommands) :
 		serialCommands(serialCommands) {
 #ifdef DEVELOPMENT
 	serialCommands->AddCommand('-', "WiFi STAtion disconnect", wifiStaDisconnect);
 	serialCommands->AddCommand('+', "WiFi STAtion connect", wifiStaConnect);
 #endif
-	serialCommands->AddCommand('x', nullptr, doConf);
-	serialCommands->AddCommand('q', nullptr, doSave);
 	serialCommands->AddCommand(' ', nullptr, doNothing);
 	serialCommands->AddCommand('?', "show system status", showStatus);
 	serialCommands->AddCommand("help", "Show help", doHelp);
 	serialCommands->getStream()->printf("Type help to get help\n");
-	createLoopTask();
 }
 
-void CommandProcessor::createLoopTask() {
-	loopTask = new Task(
-			33,
-			-1,
-			[this]() -> void {
-				if (serialCommands != nullptr) {
-					serialCommands->ReadSerial();
-				}
-			},
-			getRunner()->getScheduler(),
-			true);
+void CommandProcessor::addScheduler(Scheduler *scheduler) {
+	if (scheduler != nullptr) {
+		loopTask = new Task(
+				33,
+				-1,
+				[this]() -> void {
+					if (serialCommands != nullptr) {
+						serialCommands->ReadSerial();
+					}
+				},
+				scheduler,
+				true);
+	}
+}
+
+void CommandProcessor::loop() {
+	if (serialCommands != nullptr) {
+		serialCommands->ReadSerial();
+	}
 }
 
 void CommandProcessor::setStream(Stream *stream) {

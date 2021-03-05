@@ -7,8 +7,12 @@ void initGlobals() {
 //	auto wiFiMonitor = getWiFiMonitor();
 	auto commandProcessor = getCommandProcessor(new SerialCommands());
 	auto configManager = getConfigManager();
-	configManager->addScheduler( runner->getScheduler());
 
 	LittleFS.begin();
 	GUI.begin();
+
+	auto scheduler = runner->getScheduler();
+	commandProcessor->addScheduler(scheduler);
+	configManager->addScheduler(scheduler);
+	GUI.addScheduler(scheduler);
 }
