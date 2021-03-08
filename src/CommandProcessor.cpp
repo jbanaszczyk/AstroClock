@@ -3,6 +3,7 @@
 #include <SerialCommands.h>
 #include <ESP8266WiFi.h>
 #include "Globals.h"
+#include "WiFiManager.h"
 
 /* FIXME To Be Deleted
 
@@ -18,42 +19,17 @@ void doSthWithArgs(SerialCommands *sender) {
 
  */
 
-static const char *status2string(bool argument) {
-	return argument
-	       ? "OK"
-	       : "Fail";
-}
-
-#ifdef DEVELOPMENT
-
-void CommandProcessor::wifiStaDisconnect(SerialCommands *sender) {
-	auto stream = sender->getStream();
-	if (stream != nullptr) {
-		stream->printf("wifiStaDisconnect: ");
-	}
-	auto result = WiFi.disconnect();
-	if (stream != nullptr) {
-		stream->printf("%s\n", status2string(result));
-	}
+void CommandProcessor::wifiStaForget(SerialCommands *sender) {
+	getWiFiManager(nullptr)->prepareWiFi_STA_forget();
 }
 
 void CommandProcessor::wifiStaConnect(SerialCommands *sender) {
-	auto stream = sender->getStream();
-	if (stream != nullptr) {
-		stream->printf("wifiStaConnect: ");
-	}
-	WiFi.config(IPAddress(), IPAddress(), IPAddress());
-
-	// FIXME remove credentials
-	WiFi.begin("GolemXIV", "DuPa.9736");
-	WiFi.waitForConnectResult();
-	auto result = WiFi.isConnected();
-	if (stream != nullptr) {
-		stream->printf("%s\n", status2string(result));
-	}
+	getWiFiManager(nullptr)->prepareWiFi_STA("GolemXIV", "DuPa.9736");
 }
 
-#endif
+void CommandProcessor::wifiStaConnect_wrong(SerialCommands *sender) {
+	getWiFiManager(nullptr)->prepareWiFi_STA("UnknownSSID", "wrongPass");
+}
 
 void CommandProcessor::showStatus(SerialCommands *sender) {
 	if (auto stream = sender->getStream()) {
@@ -100,10 +76,9 @@ void CommandProcessor::doNothing(SerialCommands *sender) {
 
 CommandProcessor::CommandProcessor(SerialCommands *serialCommands) :
 		serialCommands(serialCommands) {
-#ifdef DEVELOPMENT
-	serialCommands->AddCommand('-', "WiFi STAtion disconnect", wifiStaDisconnect);
-	serialCommands->AddCommand('+', "WiFi STAtion connect", wifiStaConnect);
-#endif
+	serialCommands->AddCommand('-', "WiFi STAtion disconnect", wifiStaForget);
+	serialCommands->AddCommand('+', "WiFi STAtion connect with DHCP", wifiStaConnect);
+	serialCommands->AddCommand('$', "WiFi STAtion connect wrong SSID", wifiStaConnect_wrong);
 	serialCommands->AddCommand(' ', nullptr, doNothing);
 	serialCommands->AddCommand('?', "show system status", showStatus);
 	serialCommands->AddCommand("help", "Show help", doHelp);
@@ -113,7 +88,7 @@ CommandProcessor::CommandProcessor(SerialCommands *serialCommands) :
 void CommandProcessor::addScheduler(Scheduler *scheduler) {
 	if (scheduler != nullptr) {
 		loopTask = new Task(
-				33,
+				SerialPortReadRepeatRate,
 				-1,
 				[this]() -> void {
 					if (serialCommands != nullptr) {

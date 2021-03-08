@@ -1,12 +1,12 @@
 #include "WiFiMonitor.h"
 
 WiFiMonitor::WiFiMonitor() {
-	handlerStationModeGotIP = WiFi.onStationModeGotIP(std::bind(&WiFiMonitor::onStationModeGotIP, this, std::placeholders::_1));
-	handlerStationModeAuthModeChanged = WiFi.onStationModeAuthModeChanged(std::bind(&WiFiMonitor::onStationModeAuthModeChanged, this, std::placeholders::_1));
 	handlerStationModeConnected = WiFi.onStationModeConnected(std::bind(&WiFiMonitor::onStationModeConnected, this, std::placeholders::_1));
+//	handlerStationModeDisconnected = WiFi.onStationModeDisconnected(std::bind(&WiFiMonitor::onStationModeDisconnected, this, std::placeholders::_1));
+//	handlerStationModeGotIP = WiFi.onStationModeGotIP(std::bind(&WiFiMonitor::onStationModeGotIP, this, std::placeholders::_1));
+	handlerStationModeAuthModeChanged = WiFi.onStationModeAuthModeChanged(std::bind(&WiFiMonitor::onStationModeAuthModeChanged, this, std::placeholders::_1));
 	handlerStationModeDHCPTimeout = WiFi.onStationModeDHCPTimeout(std::bind(&WiFiMonitor::onStationModeDHCPTimeout, this));
-	handlerStationModeDisconnected = WiFi.onStationModeDisconnected(std::bind(&WiFiMonitor::onStationModeDisconnected, this, std::placeholders::_1));
-	handlerWiFiModeChange = WiFi.onWiFiModeChange(std::bind(&WiFiMonitor::onWiFiModeChange, this, std::placeholders::_1));
+//	handlerWiFiModeChange = WiFi.onWiFiModeChange(std::bind(&WiFiMonitor::onWiFiModeChange, this, std::placeholders::_1));
 	handlerSoftAPModeStationConnected = WiFi.onSoftAPModeStationConnected(std::bind(&WiFiMonitor::onSoftAPModeStationConnected, this, std::placeholders::_1));
 	handlerSoftAPModeStationDisconnected = WiFi.onSoftAPModeStationDisconnected(std::bind(&WiFiMonitor::onSoftAPModeStationDisconnected, this, std::placeholders::_1));
 }
@@ -18,12 +18,24 @@ String WiFiMonitor::macToString(const unsigned char *mac) {
 	return String(buf);
 }
 
-void WiFiMonitor::onStationModeGotIP(const WiFiEventStationModeGotIP &evt) {
-	Serial.println("==[ onStationModeGotIP ]========");
-	Serial.println(evt.ip);
-	Serial.println(evt.mask);
-	Serial.println(evt.gw);
+void WiFiMonitor::onStationModeConnected(const WiFiEventStationModeConnected &evt) {
+	Serial.println("==[ onStationModeConnected ]========");
+	Serial.println(evt.ssid);
+	Serial.println(evt.channel);
 }
+
+//void WiFiMonitor::onStationModeDisconnected(const WiFiEventStationModeDisconnected &evt) {
+//	Serial.println("==[ onStationModeDisconnected ]========");
+//	Serial.println(evt.ssid);
+//	Serial.println(evt.reason);
+//}
+
+//void WiFiMonitor::onStationModeGotIP(const WiFiEventStationModeGotIP &evt) {
+//	Serial.println("==[ onStationModeGotIP ]========");
+//	Serial.println(evt.ip);
+//	Serial.println(evt.mask);
+//	Serial.println(evt.gw);
+//}
 
 void WiFiMonitor::onStationModeAuthModeChanged(const WiFiEventStationModeAuthModeChanged &evt) {
 	Serial.println("==[ onStationModeAuthModeChanged ]========");
@@ -31,27 +43,15 @@ void WiFiMonitor::onStationModeAuthModeChanged(const WiFiEventStationModeAuthMod
 	Serial.println(evt.newMode);
 }
 
-void WiFiMonitor::onStationModeConnected(const WiFiEventStationModeConnected &evt) {
-	Serial.println("==[ onStationModeConnected ]========");
-	Serial.println(evt.ssid);
-	Serial.println(evt.channel);
-}
-
-void WiFiMonitor::onStationModeDisconnected(const WiFiEventStationModeDisconnected &evt) {
-	Serial.println("==[ onStationModeDisconnected ]========");
-	Serial.println(evt.ssid);
-	Serial.println(evt.reason);
-}
-
 void WiFiMonitor::onStationModeDHCPTimeout() {
 	Serial.println("==[ onStationModeDHCPTimeout ]========");
 }
 
-void WiFiMonitor::onWiFiModeChange(const WiFiEventModeChange &evt) {
-	Serial.println("==[ onWiFiModeChange ]========");
-	Serial.println(evt.oldMode);
-	Serial.println(evt.newMode);
-}
+//void WiFiMonitor::onWiFiModeChange(const WiFiEventModeChange &evt) {
+//	Serial.println("==[ onWiFiModeChange ]========");
+//	Serial.println(evt.oldMode);
+//	Serial.println(evt.newMode);
+//}
 
 void WiFiMonitor::onSoftAPModeStationConnected(const WiFiEventSoftAPModeStationConnected &evt) {
 	Serial.println("==[ onSoftAPModeStationConnected ]========");

@@ -7,3 +7,5 @@ i zrobić w SrialCommands
 CRC 32 bit
 
 EEPROM-ROTATE
+
+ConfigManager - make virtual
