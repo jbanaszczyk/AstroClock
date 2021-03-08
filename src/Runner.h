@@ -21,8 +21,6 @@ public:
 	virtual Scheduler *getScheduler() = 0;
 };
 
-IRunner *getRunner();
-
 class Runner : public IRunner {
 public:
 	explicit Runner(Scheduler *scheduler);
@@ -32,3 +30,5 @@ public:
 private:
 	Scheduler *scheduler;
 };
+
+IRunner *getRunner();

@@ -100,12 +100,6 @@ void CommandProcessor::addScheduler(Scheduler *scheduler) {
 	}
 }
 
-void CommandProcessor::loop() {
-	if (serialCommands != nullptr) {
-		serialCommands->ReadSerial();
-	}
-}
-
 void CommandProcessor::setStream(Stream *stream) {
 	serialCommands->setStream(stream);
 	if (stream != nullptr) {

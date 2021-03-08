@@ -7,8 +7,6 @@ class ICommandProcessor {
 public:
 	virtual ~ICommandProcessor() = default;
 
-	virtual void loop() = 0;
-
 	virtual void addScheduler(Scheduler *scheduler) = 0;
 
 	virtual void setStream(Stream *stream) = 0;
@@ -23,8 +21,6 @@ public:
 	explicit CommandProcessor(SerialCommands *serialCommands);
 
 	void addScheduler(Scheduler *scheduler) override;
-
-	void loop() override;
 
 	void setStream(Stream *stream) override;
 

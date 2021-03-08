@@ -24,6 +24,7 @@
 #include "dashboard.h"
 #include "Globals.h"
 #include "utilities.h"
+#include <Runner.h>
 
 void setupSerial(unsigned long baud = 74880) {
 	Serial.begin(baud);
@@ -31,31 +32,37 @@ void setupSerial(unsigned long baud = 74880) {
 	Serial.println();
 }
 
-struct task {
-	unsigned long rate;
-	unsigned long previous;
-};
-
-task taskA = {.rate = 333, .previous = 0};
+//Task tShowTimeOnSync(
+//		0,
+//		1,
+//		[]() -> void {
+//			auto *ntpSync = getNTPSync();
+//			Serial.printf("[NtpSync] Current local time: %s\n", ntpSync->timeStr(ntpSync->getNow()).get());
+//			ntpSync->clrSynced();
+//		},
+//		nullptr,
+//		true
+//);
 
 void updateDashboard() {
-//	if (taskA.previous == 0 || (millis() - taskA.previous > taskA.rate)) {
-//		taskA.previous = millis();
-//
-//		String stringOne = "Apples";
-//		stringOne.toCharArray(dash.data.projectName, 32);
-//
-//		dash.data.dummyInt++;
-//		dash.data.inputInt++;
-//
-//		dash.data.dummyFloat = sin((float) millis() / 5000);
-//
-//		if (dash.data.inputBool)
-//			dash.data.dummyBool = true;
-//		else
-//			dash.data.dummyBool = false;
-//	}
+	String stringOne = "Apples";
+	auto dashboardInput = getDashboard()->getDashboardData();
+	auto dashboardOutput = getDashboard()->getMutualDashboardData();
+	stringOne.toCharArray(dashboardOutput->projectName, sizeof(dashboardInput.projectName));
+	dashboardOutput->dummyInt = dashboardOutput->inputInt++;
+	dashboardOutput->dummyFloat = sin((float) millis() / 5000);
+	dashboardOutput->dummyBool = dashboardInput.inputBool;
 }
+
+Task tUpdateDashboard(
+		333,
+		-1,
+		[]() -> void {
+			updateDashboard();
+		},
+		nullptr,
+		true
+);
 
 void setup() {
 	setupSerial();
@@ -64,22 +71,12 @@ void setup() {
 
 	initGlobals();
 
-//	timeSync.waitForSync(10000);
 
-//	dash.begin(1000);
+//	getRunner()->getScheduler()->addTask(tShowTimeOnSync);
+//	getNTPSync()->addSyncCallback([]() -> void { tShowTimeOnSync.restart(); });
+
+	getRunner()->getScheduler()->addTask(tUpdateDashboard);
+	tUpdateDashboard.enable();
 
 	Serial.printf("==[ global setup done ]=========\n");
-}
-
-// FIXME: move loop() to Runner.cpp
-
-void loop() {
-	static IRunner *runner = getRunner();
-
-//	dash.loop();
-//	updateDashboard();
-//	delay(1000);
-//	showNow();
-
-	runner->getScheduler()->execute();
 }
