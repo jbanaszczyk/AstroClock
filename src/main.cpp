@@ -18,7 +18,7 @@
 #include <WiFiManager.h>
 #include <OtaUpdateHelper.h>
 #include <configManager.h>
-#include <timeSync.h>
+
 #include <TZ.h>
 #include <sntp.h>
 #include "dashboard.h"
@@ -29,21 +29,6 @@ void setupSerial(unsigned long baud = 74880) {
 	Serial.begin(baud);
 	while (!Serial) {}
 	Serial.println();
-}
-
-void showNow() {
-	if (timeSync.isSynced()) {
-		time_t now;
-		struct tm *info;
-		time(&now);
-		info = localtime(&now);
-		char buffer[80];
-
-		strftime(buffer, sizeof(buffer), "%Y.%m.%d %H.%M.%S", info);
-		Serial.printf_P("Current local time: %s\n", buffer);
-	} else {
-		Serial.printf_P("Time is not ready\n");
-	}
 }
 
 struct task {
@@ -79,8 +64,7 @@ void setup() {
 
 	initGlobals();
 
-//	timeSync.begin(TZ_Europe_Warsaw);
-//	timeSync.waitForSyncResult(10000);
+//	timeSync.waitForSync(10000);
 
 //	dash.begin(1000);
 
@@ -91,7 +75,6 @@ void setup() {
 
 void loop() {
 	static IRunner *runner = getRunner();
-//	static IWiFiManager *wiFiManager = getWiFiManager(nullptr);
 
 //	dash.loop();
 //	updateDashboard();
@@ -99,5 +82,4 @@ void loop() {
 //	showNow();
 
 	runner->getScheduler()->execute();
-//	wiFiManager->loop();
 }

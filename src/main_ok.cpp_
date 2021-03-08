@@ -95,7 +95,7 @@ void setup() {
 	WiFiManager.begin(configManager.data.projectName);
 
 	timeSync.begin(TZ_Europe_Warsaw);
-	timeSync.waitForSyncResult(10000);
+	timeSync.waitForSync(10000);
 
 	commandProcessor = getCommandProcessor(new SerialCommands());
 	commandProcessor->setStream(&Serial);
