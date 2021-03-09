@@ -38,22 +38,22 @@ build_flags =
 ;    -D DEBUG_ESP_PORT=Serial
 ;    -D DEBUG_ESP_WIFI
 
-    -D DEVELOPMENT
-
-    -D USE_TASK_SCHEDULER
+    -D _TASK_LTS_POINTER
+    -D _TASK_STD_FUNCTION
 
     -D DEBUG_IOT_PORT=Serial
-;    -D DEBUG_IOT_WIFI_MANAGER
-;    -D DEBUG_IOT_CERT_STORE
+    -D DEBUG_IOT_WIFI_MANAGER
+    -D DEBUG_IOT_CERT_STORE
+    -D DEBUG_IOT_DASHBOARD
 ;    -D DEBUG_SERIAL_COMMANDS
 
 ;    -D REBUILD_CONFIG
 ;    -D CONFIG_PATH=src/configuration.json
-;
-    -D REBUILD_DASHBOARD
-    -D DASHBOARD_PATH=src/dashboard.json
 
-    -D REBUILD_HTML
+;    -D REBUILD_DASHBOARD
+;    -D DASHBOARD_PATH=src/dashboard.json
+
+;    -D REBUILD_HTML
 
 ;    -D REBUILD_CERTS
 ;    -D openssl="C:/Program Files/Git/usr/bin/openssl.exe"

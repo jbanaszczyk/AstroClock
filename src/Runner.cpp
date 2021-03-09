@@ -17,7 +17,7 @@ IRunner *getRunner() {
 	return &runner;
 }
 
-void loop() {
+void loop_() {
 	static IRunner *runner = getRunner();
 	runner->getScheduler()->execute();
 }

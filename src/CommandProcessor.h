@@ -16,7 +16,7 @@ ICommandProcessor *getCommandProcessor(SerialCommands *serialCommands);
 
 class CommandProcessor : public ICommandProcessor {
 public:
-	const int SerialPortReadRepeatRate = 33;
+	unsigned long SerialPortReadRepeatRate = 33;
 
 	explicit CommandProcessor(SerialCommands *serialCommands);
 

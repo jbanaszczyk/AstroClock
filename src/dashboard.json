@@ -1,48 +1,50 @@
 [
   {
-    "name": "projectName",
+    "name": "restartReason",
+    "label": "Last restart reason",
     "type": "char",
-    "length": 32,
+    "length": 24,
     "direction": "display"
   },
   {
-    "name": "stringInput",
-    "type": "char",
-    "length": 32,
-    "direction": "control"
-  },
-  {
-    "name": "dummyInt",
-    "type": "uint16_t",
+    "name": "initFreeMem",
+    "label": "Total heap memory",
+    "type": "uint32_t",
     "direction": "display"
   },
   {
-    "name": "dummyBool",
-    "type": "bool",
+    "name": "currentFreeMem",
+    "label": "Free heap memory",
+    "type": "uint32_t",
     "direction": "display"
   },
   {
-    "name": "dummyFloat",
+    "name": "memUsage",
+    "label": "Free heap memory",
     "type": "float",
     "direction": "display",
     "display": "graph",
     "xaxis": 100
   },
   {
-    "name": "inputInt",
-    "type": "uint16_t",
-    "direction": "control"
+    "name": "currentTime",
+    "label": "Current time",
+    "type": "char",
+    "length": 20,
+    "direction": "display"
   },
   {
-    "name": "inputBool",
-    "type": "bool",
-    "direction": "control"
+    "name": "syncTime",
+    "label": "Last synchronization",
+    "type": "char",
+    "length": 20,
+    "direction": "display"
   },
   {
-    "name": "inputFloat",
-    "type": "float",
-    "min": 1,
-    "max": 10,
-    "direction": "control"
+    "name": "startupTime",
+    "label": "Alive since",
+    "type": "char",
+    "length": 20,
+    "direction": "display"
   }
 ]

@@ -2,7 +2,6 @@
 #include "CommandProcessor.h"
 #include <SerialCommands.h>
 #include <ESP8266WiFi.h>
-#include "Globals.h"
 #include "WiFiManager.h"
 
 /* FIXME To Be Deleted
