@@ -62,7 +62,7 @@ class Model {
 	ModelItem<time_t> now{"Time now", 0};
 	ModelItem<time_t> lastSync{"Last time synchronization", 0};
 	ModelItem<time_t> firstSync{"System startup time", 0};
-	ModelItem<unsigned long> pulse{"Just to be periodically updated", 0};
+	ModelItem<unsigned long> refresh{"Just to be periodically updated", 0};
 	ModelItem<String> timeZone{"System time zone", "" };
 public:
 	explicit Model() = default;
@@ -77,12 +77,12 @@ public:
 	void observeLastSync(ModelItem<time_t>::Observer observer) { lastSync.addObserver(std::move(observer)); }
 
 	const ModelItem<time_t> &getFirstSync() const { return firstSync; }
-	void setFirstSync(const time_t &firstSync) { Model::firstSync.setValue(firstSync); }
+	void setFirstSync(const time_t &firstSync) { if (Model::firstSync.getValue() == 0) { Model::firstSync.setValue(firstSync); }}
 	void observeFirstSync(ModelItem<time_t>::Observer observer) { firstSync.addObserver(std::move(observer)); }
 
-	const ModelItem<unsigned long> &getPulse() const { return pulse; }
-	void setPulse() { pulse.setValue(pulse.getValue() + 1); }
-	void observePulse(ModelItem<unsigned long>::Observer observer) { pulse.addObserver(std::move(observer)); }
+	const ModelItem<unsigned long> &getRefresh() const { return refresh; }
+	void setRefresh() { refresh.setValue(refresh.getValue() + 1); }
+	void observeRefresh(ModelItem<unsigned long>::Observer observer) { refresh.addObserver(std::move(observer)); }
 
 	const ModelItem<String> &getTimeZone() const { return timeZone; }
 	void setTimeZone(const String &timeZone) { Model::timeZone.setValue(timeZone); }
@@ -96,7 +96,7 @@ class Controller {
 	Scheduler *scheduler = nullptr;
 	Task *tRefresh = nullptr;
 	Task *tSetNow = nullptr;
-	Task *tShowTimeOnSync = nullptr;
+	Task *tOnTimeSync = nullptr;
 	Task *tConfigChanged = nullptr;
 
 public:
@@ -113,6 +113,11 @@ class View {
 	Controller &controller;
 public:
 	View(Model &model, Controller &controller) : model(model), controller(controller) {}
+};
+
+class SystemInterface : public View {
+public:
+	SystemInterface(Model &model, Controller &controller);
 };
 
 class DashboardView : public View {

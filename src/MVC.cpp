@@ -5,11 +5,14 @@
 #include <ConfigManager.h>
 #include "utilities.h"
 #include <sntp.h>
+#include <coredecls.h>
+#include <umm_malloc/umm_malloc.h>
 
 void initEngine() {
 
 	static Model aModel{};
 	static Controller aController(aModel);
+	static SystemInterface systemInterface(aModel, aController);
 	static DashboardView dashboardView(aModel, aController);
 
 	auto runner = getRunner();
@@ -23,7 +26,7 @@ void Controller::addScheduler(Scheduler *scheduler) {
 				RefreshInterval,
 				-1,
 				[this]() -> void {
-					model.setPulse();
+					model.setRefresh();
 				},
 				scheduler,
 				true);
@@ -35,7 +38,7 @@ void Controller::addScheduler(Scheduler *scheduler) {
 				},
 				scheduler,
 				true);
-		tShowTimeOnSync = new Task(
+		tOnTimeSync = new Task(
 				0,
 				1,
 				[this]() -> void {
@@ -53,28 +56,24 @@ void Controller::addScheduler(Scheduler *scheduler) {
 					Serial.printf("________ Config written\n");
 					auto newConfig = getConfigManager()->getEepromData().getStoredData().getConfigData();
 					model.setTimeZone(newConfig.timeZone);
-
-					if (esp8266::coreVersionNumeric() >= 20700000) {
-						Serial.printf("___ path 1\n");
-						configTime(newConfig.timeZone, "pool.ntp.org");
-					} else {
-						Serial.printf("___ path 2\n");
-						setenv("TZ", newConfig.timeZone, 1);
-						configTime(0, 0, "pool.ntp.org");
-					}
-
-					setTZ(configDefaults.timeZone);
 				},
 				scheduler,
 				true);
-		getNTPSync()->addSyncCallback([this]() -> void {
-			tShowTimeOnSync->restart();
+
+		settimeofday_cb([this]() -> void {
+			tOnTimeSync->restart();
 		});
 		getConfigManager()->setConfigSaveCallback([this]() -> void {
 			tConfigChanged->restart();
 		});
 
 	}
+}
+
+SystemInterface::SystemInterface(Model &model, Controller &controller) : View(model, controller) {
+	model.observeTimeZone([this](const String &name, const String &value) -> void {
+		configTime(value.c_str(), sntp_getservername(0), sntp_getservername(1), sntp_getservername(2));
+	});
 }
 
 DashboardView::DashboardView(Model &model, Controller &controller) : View(model, controller) {
@@ -97,14 +96,19 @@ DashboardView::DashboardView(Model &model, Controller &controller) : View(model,
 		strcpy_s(&(dashboardOutput->syncTime[0]), timeNow.get(), sizeof(dashboardInput.syncTime));
 	});
 
-	model.observePulse([this](const String &name, const long int &value) -> void {
+	model.observeTimeZone([this, model](const String &name, const String &value) -> void {
+		auto timeNow = ntpSync->timeStr(ntpSync->getNow());
+		strcpy_s(&(dashboardOutput->currentTime[0]), timeNow.get(), sizeof(dashboardInput.currentTime));
+
+		auto startupTime = ntpSync->timeStr(model.getFirstSync().getValue());
+		strcpy_s(&(dashboardOutput->startupTime[0]), timeNow.get(), sizeof(dashboardInput.startupTime));
+
+		auto syncTime = ntpSync->timeStr(model.getLastSync().getValue());
+		strcpy_s(&(dashboardOutput->syncTime[0]), timeNow.get(), sizeof(dashboardInput.syncTime));
+	});
+
+	model.observeRefresh([this](const String &name, const long int &value) -> void {
 		dashboardOutput->currentFreeMem = system_get_free_heap_size();
 		dashboardOutput->memUsage = system_get_free_heap_size() * float{1.0} / initFreeHeapSize;
 	});
-
-	model.observeTimeZone([this](const String &name, const String &value) -> void {
-		Serial.printf("__________ timezone %s\n", value.c_str());
-
-	});
-
 }

@@ -34,3 +34,10 @@ char *strcpy_P_s(char *destination, const char *source, size_t max_len) {
 	destination[max_len] = '\0';
 	return destination;
 }
+
+void printTm(const char* what, const tm* tm) {
+	Serial.print(what);
+	PTM(isdst); PTM(yday); PTM(wday);
+	PTM(year);  PTM(mon);  PTM(mday);
+	PTM(hour);  PTM(min);  PTM(sec);
+}

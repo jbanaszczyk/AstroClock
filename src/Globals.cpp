@@ -18,7 +18,7 @@ void initGlobals() {
 			getConfigManager()->getEepromData().getStoredData().getConfigData().timeZone,
 			"0.pool.ntp.org", "1.pool.ntp.org", "2.pool.ntp.org");
 
-	auto ntpSync = getNTPSync();
+	getNTPSync();
 
 	auto commandProcessor = getCommandProcessor(new SerialCommands());
 	auto webServer = getWebServer();
