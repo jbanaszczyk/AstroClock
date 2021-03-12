@@ -53,7 +53,6 @@ void Controller::addScheduler(Scheduler *scheduler) {
 				0,
 				1,
 				[this]() -> void {
-					Serial.printf("________ Config written\n");
 					auto newConfig = getConfigManager()->getEepromData().getStoredData().getConfigData();
 					model.setTimeZone(newConfig.timeZone);
 				},
@@ -66,7 +65,6 @@ void Controller::addScheduler(Scheduler *scheduler) {
 		getConfigManager()->setConfigSaveCallback([this]() -> void {
 			tConfigChanged->restart();
 		});
-
 	}
 }
 

@@ -1,13 +1,8 @@
-
 #include <Arduino.h>
 #include <EEPROM_Rotate.h>
 #include <spi_flash.h>
 
 EEPROM_Rotate EEPROMr;
-
-// -----------------------------------------------------------------------------
-// INFO
-// -----------------------------------------------------------------------------
 
 extern "C" uint32_t _SPIFFS_start;
 extern "C" uint32_t _SPIFFS_end;
