@@ -2,7 +2,7 @@
 /* sketch @0x40200000 (~1019KB) (1044464B) */
 /* empty  @0x402FEFF0 (~1028KB) (1052688B) */
 /* spiffs @0x40400000 (~2024KB) (2072576B) */
-/* eeprom @0x405F9000 (16KB) */
+/* eeprom @0x405FA000 (8KB) */
 /* rfcal  @0x405FC000 (4KB) */
 /* wifi   @0x405FD000 (12KB) */
 
@@ -18,7 +18,7 @@ PROVIDE ( _FS_start = 0x40400000 );
 PROVIDE ( _FS_end = 0x405F8000 );
 PROVIDE ( _FS_page = 0x100 );
 PROVIDE ( _FS_block = 0x2000 );
-PROVIDE ( _EEPROM_start = 0x405f9000 );
+PROVIDE ( _EEPROM_start = 0x405fA000 );
 /* The following symbols are DEPRECATED and will be REMOVED in a future release */
 PROVIDE ( _SPIFFS_start = 0x40400000 );
 PROVIDE ( _SPIFFS_end = 0x405F8000 );

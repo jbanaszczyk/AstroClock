@@ -6,7 +6,6 @@
 #include "utilities.h"
 #include <sntp.h>
 #include <coredecls.h>
-#include <umm_malloc/umm_malloc.h>
 
 void initEngine() {
 
