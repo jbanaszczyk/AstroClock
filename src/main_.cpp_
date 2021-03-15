@@ -1,0 +1,94 @@
+#include <Arduino.h>
+#include <SimpleLogging.h>
+
+#ifndef DEBUG_IOT_PORT
+#ifdef DEBUG_ESP_PORT
+#define DEBUG_IOT_PORT DEBUG_ESP_PORT
+#else
+#define DEBUG_IOT_PORT Serial
+#endif
+#endif
+
+#ifndef DEBUG_IOT_LEVEL
+#define DEBUG_IOT_LEVEL TRACE
+#endif
+
+#ifndef DEBUG_IOT_EXAMPLE
+#define DEBUG_IOT_EXAMPLE TRACE
+#endif
+
+#define QUOTE(name) #name
+#define STR(macro) QUOTE(macro)
+
+void doSomeLogs() {
+	Serial.printf("Logging logger for level %s ...\n", STR(DEBUG_IOT_EXAMPLE));
+	static SimpleLogging::Logger *logger = Logging.getLogger("SomeLogs", Logging.DEBUG_IOT_EXAMPLE);
+	logger->critical.println("Message: critical");
+	logger->error.println("Message: error");
+	logger->warning.println("Message: warning");
+	logger->notice.println("Message: notice");
+	logger->info.println("Message: info");
+	logger->debug.println("Message: debug");
+	logger->trace.println("Message: trace");
+
+	logger->error.lazyLog([]() -> const char * {
+		Serial.println("Inside lazy evaluated logCreator for ERROR");
+		return "Error: Lazy evaluation\n";
+	});
+	logger->debug.lazyLog([]() -> const char * {
+		Serial.println("Inside lazy evaluated logCreator for DEBUG");
+		return "Debug: Lazy evaluation\n";
+	});
+}
+
+void setupSerial(unsigned long baud = 74880) {
+	Serial.begin(baud);
+	while (!Serial) {}
+	Serial.println();
+}
+
+void setup() {
+	setupSerial();
+
+	Serial.println("------------------------");
+	Serial.printf("Logging handler for port %s, level %s ...\n", STR(DEBUG_IOT_PORT), STR(DEBUG_IOT_LEVEL));
+	Logging.addHandler(DEBUG_IOT_PORT, Logging.DEBUG_IOT_LEVEL);
+	doSomeLogs();
+	Serial.println("------------------------");
+	Serial.println();
+}
+
+
+
+
+
+
+
+
+
+//#include <Arduino.h>
+//#include "Globals.h"
+//#include "MVC.h"
+//#include "utilities.h"
+//
+//#include <SimpleLogging.h>
+//
+//
+//void setup() {
+//	initFreeHeapSize = system_get_free_heap_size();
+//
+//	setupSerial();
+//
+//
+//	Serial.printf("==[ global setup ]==============\n");
+//
+//	initGlobals();
+//
+//	Serial.printf("==[ model setup ]===============\n");
+//
+//	initEngine();
+//
+//	Serial.printf("==[ setup done ]================\n");
+//}
+
+// loop() is refactored to Runner.cpp

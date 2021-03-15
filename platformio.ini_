@@ -1,13 +1,3 @@
-; PlatformIO Project Configuration File
-;
-;   Build options: build flags, source filter
-;   Upload options: custom upload port, speed and extra flags
-;   Library options: dependencies, extra library storages
-;   Advanced options: extra scripting
-;
-; Please visit documentation for the other options and examples
-; https://docs.platformio.org/page/projectconf.html
-
 [env:nodemcu]
 platform = espressif8266
 board = nodemcu
@@ -18,9 +8,8 @@ monitor_speed = 74880
 upload_speed = 921600
 test_filter = test_common test_embedded
 lib_deps =
-    https://github.com/jbanaszczyk/esp8266-iot-framework.git
-    https://github.com/jbanaszczyk/Arduino-SerialCommands.git
     https://github.com/arkhipenko/TaskScheduler.git
+    https://github.com/jbanaszczyk/esp8266-iot-framework.git
 
 build_type = release
 
@@ -41,22 +30,24 @@ build_flags =
     -D NO_GLOBAL_EEPROM
 
     -D DEBUG_IOT_PORT=Serial
-    -D DEBUG_IOT_WIFI_MANAGER
-    -D DEBUG_IOT_CERT_STORE
-    -D DEBUG_IOT_DASHBOARD
-;    -D DEBUG_SERIAL_COMMANDS
+;    -D DEBUG_IOT_LEVEL=NOTICE
 
-    -D REBUILD_CONFIG
-    -D CONFIG_PATH=src/configuration.json
+    -D DEBUG_SERIAL_COMMANDS=NOTICE
+    -D DEBUG_IOT_WIFI_MANAGER=NOTICE
+;    -D DEBUG_IOT_CERT_STORE
+;    -D DEBUG_IOT_DASHBOARD
 
-    -D REBUILD_DASHBOARD
-    -D DASHBOARD_PATH=src/dashboard.json
+;    -D REBUILD_CONFIG
+;    -D CONFIG_PATH=src/configuration.json
 
-    -D REBUILD_HTML
+;    -D REBUILD_DASHBOARD
+;    -D DASHBOARD_PATH=src/dashboard.json
 
-    -D REBUILD_CERTS
-    -D openssl="C:/Program Files/Git/usr/bin/openssl.exe"
-    -D DOMAIN_LIST=google.com,ipgeolocation.io
+;    -D REBUILD_HTML
+
+;    -D REBUILD_CERTS
+;    -D openssl="C:/Program Files/Git/usr/bin/openssl.exe"
+;    -D DOMAIN_LIST=google.com,ipgeolocation.io
 
 ; Do not use, because WiFi dose not work
 ;    -D_DEBUG_HTTPCLIENT=Serial.printf
