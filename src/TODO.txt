@@ -1,11 +1,7 @@
 // TODO
 
-Popatrzeć nae eventy: .platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src\ESP8266WiFiGeneric.cpp
-C:\Users\JB\.platformio\packages\framework-arduinoespressif8266\libraries\ESP8266WiFi\src\ESP8266WiFiGeneric.cpp
-i zrobić w SrialCommands
+HttpRequest - nie działa
 
-CRC 32 bit
+Stringi zrobić PSTR
 
-EEPROM-ROTATE
-
-ConfigManager - make virtual
+Logging w CertStore i HttpRequest

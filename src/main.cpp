@@ -39,4 +39,8 @@ void setup() {
 	Serial.printf("==[ setup done ]================\n");
 }
 
-// loop() is refactored to Runner.cpp
+
+void loop() {
+	static IRunner *runner = getRunner();
+	runner->getScheduler()->execute();
+}
