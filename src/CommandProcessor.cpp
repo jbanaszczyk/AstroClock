@@ -8,12 +8,12 @@
 
 void doSthWithArgs(SerialCommands *sender) {
 	Stream *stream = stream;
-	stream->printf_P(PSTR("Got command\n"));
+	stream->print(PSTR("Got command\n"));
 	decltype(sender->Next()) argument;
 	while ((argument = sender->Next()) != nullptr) {
 		stream->printf_P(PSTR("\targument: %s\n"), argument);
 	}
-	stream->printf_P(PSTR("=================\n"));
+	stream->print(PSTR("=================\n"));
 }
 
  */
@@ -33,13 +33,13 @@ void CommandProcessor::wifiStaConnect_wrong(SerialCommands *sender) {
 void CommandProcessor::showStatus(SerialCommands *sender) {
 	if (auto stream = sender->getStream()) {
 		stream->printf_P(PSTR("Heap free:   %d\n"), system_get_free_heap_size());
-		stream->println("==[ WiFi ]=============");
+		stream->print(PSTR("==[ WiFi ]=============\n"));
 		stream->printf_P(PSTR("Hostname:    %s\n"), WiFi.hostname().c_str());
 		stream->printf_P(PSTR("WiFi status: %d\n"), WiFi.status());
 		stream->printf_P(PSTR("WiFi mode:   %d\n"), WiFi.getMode());
 
 		if (WiFi.getMode() & WIFI_STA) {
-			stream->println("==[ STAtion ]==========");
+			stream->print(PSTR("==[ STAtion ]==========\n"));
 			stream->printf_P(PSTR("SSID:        %s\n"), WiFi.SSID().c_str());
 			stream->printf_P(PSTR("IP:          %s\n"), WiFi.localIP().toString().c_str());
 			stream->printf_P(PSTR("Subnet:      %s\n"), WiFi.subnetMask().toString().c_str());
@@ -51,7 +51,7 @@ void CommandProcessor::showStatus(SerialCommands *sender) {
 		}
 
 		if (WiFi.getMode() & WIFI_AP) {
-			stream->println("==[ AP ]===============");
+			stream->print(PSTR("==[ AP ]===============\n"));
 			stream->printf_P(PSTR("SSID:        %s\n"), WiFi.softAPSSID().c_str());
 			stream->printf_P(PSTR("IP:          %s\n"), WiFi.softAPIP().toString().c_str());
 		}
@@ -59,7 +59,6 @@ void CommandProcessor::showStatus(SerialCommands *sender) {
 		stream->println("==[ Credentials ]======");
 		stream->printf_P(PSTR("PSK:         %s\n"), WiFi.psk().c_str());
 		stream->printf_P(PSTR("AP PSK:      %s\n"), WiFi.softAPPSK().c_str());
-		stream->println();
 	}
 }
 
@@ -69,7 +68,7 @@ void CommandProcessor::doHelp(SerialCommands *sender) {
 
 void CommandProcessor::doNothing(SerialCommands *sender) {
 	if (auto stream = sender->getStream()) {
-		stream->printf_P(PSTR("\n"));
+		stream->println();
 	}
 }
 
@@ -81,7 +80,7 @@ CommandProcessor::CommandProcessor(SerialCommands *serialCommands) :
 	serialCommands->AddCommand(' ', nullptr, doNothing);
 	serialCommands->AddCommand('?', "show system status", showStatus);
 	serialCommands->AddCommand("help", "Show help", doHelp);
-	serialCommands->getStream()->printf_P(PSTR("Type help to get help\n"));
+	serialCommands->getStream()->print(PSTR("Type help to get help\n"));
 }
 
 void CommandProcessor::addScheduler(Scheduler *scheduler) {

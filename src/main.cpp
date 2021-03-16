@@ -28,17 +28,16 @@ void setup() {
 
 	Logging.addHandler(DEBUG_IOT_PORT, Logging.DEBUG_IOT_LEVEL);
 
-	Serial.printf_P(PSTR("==[ global setup ]==============\n"));
+	Serial.print(PSTR("==[ global setup ]==============\n"));
 
 	initGlobals();
 
-	Serial.printf_P(PSTR("==[ model setup ]===============\n"));
+	Serial.print(PSTR("==[ model setup ]===============\n"));
 
 	initEngine();
 
-	Serial.printf_P(PSTR("==[ setup done ]================\n"));
+	Serial.print(PSTR("==[ setup done ]================\n"));
 }
-
 
 void loop() {
 	static IRunner *runner = getRunner();
