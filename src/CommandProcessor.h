@@ -2,6 +2,11 @@
 
 #include <SerialCommands.h>
 #include <TaskSchedulerDeclarations.h>
+#include <SimpleLogging.h>
+
+#ifndef DEBUG_IOT_COMMANDS
+#define DEBUG_IOT_COMMANDS INFO
+#endif
 
 class ICommandProcessor {
 public:
@@ -25,6 +30,8 @@ public:
 	void setStream(Stream *stream) override;
 
 private:
+	SimpleLogging::Logger *logger = Logging.getLogger("Commands", Logging.DEBUG_IOT_COMMANDS);
+
 	SerialCommands *serialCommands;
 	Task *loopTask = nullptr;
 
@@ -36,7 +43,7 @@ private:
 
 	static void wifiStaConnect(SerialCommands *sender);
 
-	static void showStatus(SerialCommands *sender);
+	static void wifiApPsk(SerialCommands *sender);
 
-	static void wifiStaConnect_wrong(SerialCommands *sender);
+	static void showStatus(SerialCommands *sender);
 };

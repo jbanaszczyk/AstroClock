@@ -4,30 +4,41 @@
 #include <ESP8266WiFi.h>
 #include "WiFiManager.h"
 
-/* FIXME To Be Deleted
-
+/*
 void doSthWithArgs(SerialCommands *sender) {
-	Stream *stream = stream;
-	stream->print(PSTR("Got command\n"));
-	decltype(sender->Next()) argument;
-	while ((argument = sender->Next()) != nullptr) {
-		stream->printf_P(PSTR("\targument: %s\n"), argument);
+	if (auto stream = sender->getStream()) {
+		stream->print(PSTR("Got command\n"));
+		decltype(sender->Next()) argument;
+		while ((argument = sender->Next()) != nullptr) {
+			stream->printf_P(PSTR("\targument: %s\n"), argument);
+		}
+		stream->print(PSTR("=================\n"));
 	}
-	stream->print(PSTR("=================\n"));
 }
-
- */
+*/
 
 void CommandProcessor::wifiStaForget(SerialCommands *sender) {
+	if (auto stream = sender->getStream()) {
+		stream->print(PSTR("OK\n"));
+	}
 	getWiFiManager(nullptr)->prepareWiFi_STA_forget();
 }
 
 void CommandProcessor::wifiStaConnect(SerialCommands *sender) {
-	getWiFiManager(nullptr)->prepareWiFi_STA("GolemXIV", "DuPa.9736");
+	if (auto stream = sender->getStream()) {
+		stream->print(PSTR("OK\n"));
+	}
+	auto ssid = sender->Next();
+	auto password = sender->Next();
+	getWiFiManager(nullptr)->prepareWiFi_STA(ssid, password);
 }
 
-void CommandProcessor::wifiStaConnect_wrong(SerialCommands *sender) {
-	getWiFiManager(nullptr)->prepareWiFi_STA("UnknownSSID", "wrongPass");
+void CommandProcessor::wifiApPsk(SerialCommands *sender) {
+	if (auto stream = sender->getStream()) {
+		stream->print(PSTR("OK\n"));
+	}
+	auto password = sender->Next();
+	getWiFiManager(nullptr)->prepareWiFi_AP_PSK(password);
 }
 
 void CommandProcessor::showStatus(SerialCommands *sender) {
@@ -74,13 +85,17 @@ void CommandProcessor::doNothing(SerialCommands *sender) {
 
 CommandProcessor::CommandProcessor(SerialCommands *serialCommands) :
 		serialCommands(serialCommands) {
-	serialCommands->AddCommand('-', "WiFi STAtion disconnect", wifiStaForget);
-	serialCommands->AddCommand('+', "WiFi STAtion connect with DHCP", wifiStaConnect);
-	serialCommands->AddCommand('$', "WiFi STAtion connect wrong SSID", wifiStaConnect_wrong);
+
+	serialCommands->AddCommand(PSTR("wifi status"), PSTR("Show wifi status"), showStatus);
+	serialCommands->AddCommand(PSTR("wifi off"), PSTR("Forget wifi credentials"), wifiStaForget);
+	serialCommands->AddCommand(PSTR("wifi on"), PSTR("Connect wifi: [ssid] [password] "), wifiStaConnect);
+	serialCommands->AddCommand(PSTR("wifi ap"), PSTR("Change AP password: [password] "), wifiApPsk);
+
+	serialCommands->AddCommand(PSTR("help"), PSTR("Show this help"), doHelp);
+
 	serialCommands->AddCommand(' ', nullptr, doNothing);
-	serialCommands->AddCommand('?', "show system status", showStatus);
-	serialCommands->AddCommand("help", "Show help", doHelp);
-	serialCommands->getStream()->print(PSTR("Type help to get help\n"));
+
+	serialCommands->getStream()->print(PSTR("Type 'help' to get help\n"));
 }
 
 void CommandProcessor::addScheduler(Scheduler *scheduler) {
