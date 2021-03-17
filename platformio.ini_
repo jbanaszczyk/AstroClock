@@ -6,7 +6,18 @@ board_build.ldscript = ld/eagle.flash.4m.custom.ld
 board_build.filesystem = littlefs
 monitor_speed = 74880
 upload_speed = 921600
-test_filter = test_common test_embedded
+
+src_filter =
+    +<run/>
+    -<test/>
+
+test_ignore =
+    test_desktop
+
+test_filter =
+;    test_common
+    test_embedded
+
 lib_deps =
     https://github.com/arkhipenko/TaskScheduler.git
     https://github.com/jbanaszczyk/esp8266-iot-framework.git
@@ -14,6 +25,7 @@ lib_deps =
 build_type = release
 
 build_flags =
+    -D NDEBUG
     -D BEARSSL_SSL_BASIC
     -D HTTPCLIENT_1_1_COMPATIBLE=0
     -D PIO_FRAMEWORK_ARDUINO_LWIP2_LOW_MEMORY_LOW_FLASH
@@ -55,3 +67,27 @@ build_flags =
 ; Do not use, because WiFi dose not work
 ;    -D_DEBUG_HTTPCLIENT=Serial.printf
 ;    -D_DEBUG_ESP_CORE
+
+[env:native]
+platform = native
+lib_compat_mode = off
+
+src_filter =
+    -<run/>
+    +<test/>
+
+test_ignore =
+    test_embedded
+
+test_filter =
+    test_common
+    test_desktop
+
+lib_deps =
+    google/googletest
+    ArduinoFake
+
+build_type = debug
+
+build_flags =
+    -D DEBUG

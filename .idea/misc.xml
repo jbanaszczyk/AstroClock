@@ -6,13 +6,13 @@
       <file path="$PROJECT_DIR$/include" />
       <file path="$PROJECT_DIR$/lib" />
       <file path="$PROJECT_DIR$/src" />
+      <file path="$PROJECT_DIR$/src_test" />
       <file path="$PROJECT_DIR$/test" />
     </sourceRoots>
     <excludeRoots>
       <file path="$PROJECT_DIR$/cmake-build-debug" />
       <file path="$PROJECT_DIR$/cmake-build-native" />
       <file path="$PROJECT_DIR$/cmake-build-native-mingw-32" />
-      <file path="$PROJECT_DIR$/lib/calculator" />
       <file path="$PROJECT_DIR$/lib/check_exceptions" />
       <file path="$PROJECT_DIR$/lib/mem_info" />
       <file path="$PROJECT_DIR$/lib/unused" />
