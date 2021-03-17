@@ -123,7 +123,7 @@ public:
 class DashboardView : public View {
 	DashboardData dashboardInput = getDashboard()->getDashboardData();
 	DashboardData *dashboardOutput = getDashboard()->getMutualDashboardData();
-	INTPSync *ntpSync = getNTPSync();
+	NTPSync *ntpSync = getNTPSync();
 public:
 	DashboardView(Model &model, Controller &controller);
 };

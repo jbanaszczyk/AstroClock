@@ -21,5 +21,21 @@
     "type": "char",
     "length": 64,
     "value": "CET-1CEST,M3.5.0,M10.5.0/3"
+  },
+  {
+    "name": "longitude",
+    "label": "Longitude",
+    "type": "double",
+    "min": -180,
+    "max": 180,
+    "value": 52.229831202952695
+  },
+  {
+    "name": "latitude",
+    "label": "Latitude",
+    "type": "double",
+    "min": -90,
+    "max": 90,
+    "value": 21.011734659619734
   }
 ]
