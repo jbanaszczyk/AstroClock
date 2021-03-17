@@ -1,7 +1,7 @@
 
 #include <unity.h>
 
-#include "test_calculator.h"
+#include "test_main.h"
 
 //void setUp(void) {
 //    TEST_MESSAGE("Within setUp");
